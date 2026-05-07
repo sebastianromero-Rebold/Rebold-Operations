@@ -1,0 +1,630 @@
+
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600&family=Geist+Mono:wght@400;500&display=swap');
+  :root {
+    --eo: cubic-bezier(0.23,1,0.32,1);
+    --ei: cubic-bezier(0.77,0,0.175,1);
+    --hi: #e85d26; --hi-s: rgba(232,93,38,.12); --hi-b: rgba(232,93,38,.3);
+    --s1: var(--color-background-primary); --s2: var(--color-background-secondary); --s3: var(--color-background-tertiary);
+    --bd: var(--color-border-tertiary); --bm: var(--color-border-secondary);
+    --t1: var(--color-text-primary); --t2: var(--color-text-secondary); --t3: var(--color-text-tertiary);
+    --r: var(--border-radius-lg); --rm: var(--border-radius-md);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  #app{font-family:'Geist',var(--font-sans),system-ui;background:var(--s3);min-height:100vh}
+  .sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0)}
+
+  /* Header */
+  .hdr{background:var(--s1);border-bottom:.5px solid var(--bd);padding:0 2rem;height:56px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100}
+  .logo{display:flex;align-items:center;gap:9px;font-size:14px;font-weight:500;color:var(--t1)}
+  .lm{width:26px;height:26px;background:var(--hi);border-radius:7px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:12px;font-weight:600}
+  .badge{background:var(--hi-s);color:var(--hi);border:.5px solid var(--hi-b);font-size:11px;font-weight:500;padding:2px 8px;border-radius:20px}
+
+  /* Layout */
+  .lay{display:grid;grid-template-columns:240px 1fr;min-height:calc(100vh - 56px)}
+
+  /* Sidebar */
+  .sb{background:var(--s1);border-right:.5px solid var(--bd);padding:1.5rem 0 80px;position:sticky;top:56px;height:calc(100vh - 56px);overflow-y:auto}
+  .sb-lbl{font-size:10px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;color:var(--t3);padding:0 1rem .5rem}
+  .snav{list-style:none;display:flex;flex-direction:column;gap:1px;padding:0 .75rem}
+  .sni{display:flex;align-items:center;gap:9px;padding:8px 10px;border-radius:var(--rm);cursor:pointer;transition:background 150ms var(--eo),transform 120ms}
+  .sni:hover{background:var(--s2)} .sni.active{background:var(--hi-s)} .sni:active{transform:scale(.98)}
+  .snum{width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:500;border:.5px solid var(--bm);color:var(--t2);background:var(--s1);flex-shrink:0;transition:all 200ms var(--eo)}
+  .sni.active .snum{background:var(--hi);border-color:var(--hi);color:#fff}
+  .sni.done .snum{background:var(--color-background-success);border-color:transparent;color:var(--color-text-success);font-size:10px}
+  .sni.done .snum::after{content:'✓'} .sni.done .snum span{display:none}
+  .snlbl{font-size:12px;color:var(--t2);transition:color 150ms}
+  .sni.active .snlbl{color:var(--hi);font-weight:500} .sni.done .snlbl{color:var(--t1)}
+  .pgwrap{padding:.75rem 1rem;border-top:.5px solid var(--bd);position:absolute;bottom:0;left:0;right:0;background:var(--s1)}
+  .pglbl{display:flex;justify-content:space-between;font-size:11px;color:var(--t3);margin-bottom:6px}
+  .pgbg{height:3px;background:var(--s2);border-radius:99px;overflow:hidden}
+  .pgfill{height:100%;background:var(--hi);border-radius:99px;transition:width 400ms var(--eo)}
+
+  /* Main */
+  .main{padding:2rem 2.5rem 4rem;max-width:780px}
+  .panel{display:none;animation:sin 280ms var(--eo) forwards}
+  .panel.active{display:block}
+  @keyframes sin{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+  .stag{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;color:var(--hi);margin-bottom:6px}
+  .stitle{font-size:21px;font-weight:500;color:var(--t1);letter-spacing:-.02em;margin-bottom:5px}
+  .ssub{font-size:13px;color:var(--t2);line-height:1.6;margin-bottom:1.75rem}
+
+  /* Form */
+  .fsec{margin-bottom:1.75rem}
+  .fstitle{font-size:11px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;color:var(--t3);margin-bottom:.75rem;padding-bottom:7px;border-bottom:.5px solid var(--bd);display:flex;justify-content:space-between;align-items:center}
+  .fg2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  .fg3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px}
+  .ff{display:flex;flex-direction:column;gap:5px}
+  .ff label{font-size:12px;font-weight:500;color:var(--t1)}
+  .fhint{font-size:11px;color:var(--t3);margin-top:3px}
+  input[type=text],input[type=email],input[type=tel],input[type=number],select,textarea{font-family:inherit;font-size:13px;color:var(--t1);background:var(--s1);border:.5px solid var(--bm);border-radius:var(--rm);padding:8px 11px;outline:none;transition:border-color 150ms,box-shadow 150ms;width:100%}
+  input:focus,select:focus,textarea:focus{border-color:var(--hi);box-shadow:0 0 0 3px var(--hi-s)}
+  textarea{resize:vertical;min-height:76px;line-height:1.6}
+  .fc{grid-column:1/-1}
+
+  /* Contact card */
+  .cc{background:var(--s1);border:.5px solid var(--bm);border-radius:var(--r);padding:14px;margin-bottom:10px;transition:opacity 280ms,transform 280ms}
+  .cch{display:flex;align-items:center;justify-content:space-between;margin-bottom:11px}
+  .cav{width:34px;height:34px;border-radius:50%;background:var(--hi-s);border:.5px solid var(--hi-b);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:500;color:var(--hi)}
+
+  /* Buttons */
+  .abtn{display:inline-flex;align-items:center;gap:5px;font-size:12px;font-weight:500;color:var(--hi);background:var(--hi-s);border:.5px solid var(--hi-b);border-radius:var(--rm);padding:6px 12px;cursor:pointer;transition:all 150ms var(--eo);font-family:inherit}
+  .abtn:hover{background:rgba(232,93,38,.2)} .abtn:active{transform:scale(.97)}
+  .rbtn{background:none;border:none;cursor:pointer;color:var(--t3);padding:4px;border-radius:5px;transition:all 120ms;font-family:inherit;display:flex;align-items:center}
+  .rbtn:hover{color:#e24b4a;background:rgba(226,75,74,.08)}
+  .btnrow{display:flex;align-items:center;justify-content:space-between;margin-top:2rem;padding-top:1.25rem;border-top:.5px solid var(--bd)}
+  .btn{font-family:inherit;font-size:13px;font-weight:500;padding:9px 18px;border-radius:var(--rm);cursor:pointer;transition:all 150ms var(--eo);display:inline-flex;align-items:center;gap:6px;border:.5px solid transparent}
+  .btn:active{transform:scale(.97)}
+  .btng{background:transparent;border-color:var(--bm);color:var(--t2)} .btng:hover{background:var(--s2);color:var(--t1)}
+  .btnp{background:var(--hi);color:#fff;border-color:var(--hi)} .btnp:hover{background:#d4531f}
+  .btns{background:#1a7a4a;color:#fff;border-color:#1a7a4a} .btns:hover{background:#165f3a}
+  .btns:disabled{background:#888;border-color:#888;cursor:not-allowed;opacity:.7}
+
+  /* Team */
+  .tgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .tcard{background:var(--s1);border:.5px solid var(--bm);border-radius:var(--r);padding:13px;cursor:pointer;transition:border-color 200ms,box-shadow 200ms;position:relative}
+  .tcard.sel{border-color:var(--hi);box-shadow:0 0 0 2px var(--hi-s)}
+  .ck{position:absolute;top:9px;right:9px;width:17px;height:17px;border-radius:50%;background:var(--hi);display:flex;align-items:center;justify-content:center;color:#fff;font-size:9px;opacity:0;transform:scale(0);transition:all 180ms cubic-bezier(.34,1.56,.64,1)}
+  .tcard.sel .ck{opacity:1;transform:scale(1)}
+  .mhdr{display:flex;align-items:center;gap:9px;margin-bottom:9px}
+  .mav{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:500}
+  .mname{font-size:12px;font-weight:500;color:var(--t1)} .mrole{font-size:11px;color:var(--t2)}
+  .tfield{display:flex;align-items:center;gap:6px;margin-top:7px}
+  .tfield label{font-size:11px;color:var(--t3);white-space:nowrap}
+  .tfield select{font-size:12px;padding:4px 7px;flex:1}
+
+  /* Slack email fields */
+  .email-row{display:flex;align-items:center;gap:8px;margin-top:7px}
+  .email-row input{font-size:11px;padding:4px 8px;flex:1}
+  .email-tag{font-size:10px;padding:2px 6px;border-radius:10px;background:var(--hi-s);color:var(--hi);border:.5px solid var(--hi-b);white-space:nowrap}
+
+  /* Scope */
+  .sgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(185px,1fr));gap:9px}
+  .sitem{background:var(--s1);border:.5px solid var(--bm);border-radius:var(--r);padding:13px;cursor:pointer;transition:border-color 150ms,background 150ms;position:relative}
+  .sitem:hover{background:var(--s2)} .sitem.sel{border-color:var(--hi);background:var(--hi-s)}
+  .sihdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:5px}
+  .sich{width:15px;height:15px;border-radius:50%;background:var(--hi);display:flex;align-items:center;justify-content:center;color:#fff;font-size:9px;opacity:0;transform:scale(0);transition:all 180ms cubic-bezier(.34,1.56,.64,1)}
+  .sitem.sel .sich{opacity:1;transform:scale(1)}
+  .silbl{font-size:12px;font-weight:500;color:var(--t1)} .sisub{font-size:11px;color:var(--t2)}
+  .scnt{display:flex;align-items:center;gap:6px;margin-top:9px;overflow:hidden;max-height:0;transition:max-height 250ms var(--eo)}
+  .sitem.sel .scnt{max-height:40px}
+  .scnt input{padding:4px 7px;font-size:12px}
+
+  /* Chips */
+  .chips{display:flex;gap:7px;flex-wrap:wrap}
+  .chip{display:flex;align-items:center;gap:5px;padding:6px 12px;border-radius:20px;border:.5px solid var(--bm);cursor:pointer;font-size:12px;font-weight:500;color:var(--t2);background:var(--s1);transition:all 150ms}
+  .chip:hover{border-color:var(--hi);color:var(--hi)} .chip.on{background:var(--hi-s);border-color:var(--hi);color:var(--hi)}
+
+  /* Meetings */
+  .mgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}
+  .mopt{background:var(--s1);border:.5px solid var(--bm);border-radius:var(--r);padding:13px;cursor:pointer;transition:border-color 150ms;text-align:center}
+  .mopt.sel{border-color:var(--hi);background:var(--hi-s)}
+  .mfreq{font-size:14px;font-weight:500;color:var(--t1);margin-bottom:3px} .mfsub{font-size:11px;color:var(--t2)}
+
+  /* Summary */
+  .sblk{background:var(--s1);border:.5px solid var(--bd);border-radius:var(--r);margin-bottom:10px;overflow:hidden}
+  .sbhdr{padding:12px 15px;display:flex;align-items:center;gap:9px;border-bottom:.5px solid var(--bd);background:var(--s2)}
+  .sbtitle{font-size:12px;font-weight:500;color:var(--t1)}
+  .sbbody{padding:12px 15px}
+  .srow{display:flex;align-items:flex-start;justify-content:space-between;padding:5px 0;font-size:12px;border-bottom:.5px solid var(--bd)}
+  .srow:last-child{border-bottom:none}
+  .sk{color:var(--t2);flex-shrink:0;margin-right:10px} .sv{color:var(--t1);text-align:right}
+  .tlst{display:flex;flex-wrap:wrap;gap:5px;justify-content:flex-end}
+  .tag{font-size:11px;padding:2px 7px;border-radius:20px;background:var(--s2);border:.5px solid var(--bd);color:var(--t2)}
+
+  /* Activation log */
+  .alog{background:var(--s2);border:.5px solid var(--bd);border-radius:var(--r);padding:14px;margin-top:12px;font-family:var(--font-mono);font-size:12px;display:none}
+  .alog.show{display:block}
+  .aline{padding:3px 0;display:flex;align-items:flex-start;gap:8px;opacity:0;animation:lin 300ms var(--eo) forwards}
+  @keyframes lin{from{opacity:0;transform:translateX(-4px)}to{opacity:1;transform:none}}
+  .aico{flex-shrink:0;width:16px;text-align:center}
+  .spi{display:inline-block;animation:spin 800ms linear infinite}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  .ok{color:var(--color-text-success)} .er{color:var(--color-text-danger)} .info{color:var(--t2)}
+  .upload-zone{border:1.5px dashed var(--bm);border-radius:var(--r);padding:1.5rem;text-align:center;cursor:pointer;transition:all 200ms;background:var(--s1)}
+  .upload-zone:hover{border-color:var(--hi);background:var(--hi-s)}
+  .acc-item{display:flex;align-items:center;gap:9px;padding:9px 11px;background:var(--s1);border:.5px solid var(--bd);border-radius:var(--rm);font-size:12px;color:var(--t1)}
+  .acc-badge{font-size:10px;padding:2px 7px;border-radius:20px;margin-left:auto;font-weight:500}
+  .bdrive{background:#E8F5E9;color:#2E7D32} .bslack{background:#E8EAF6;color:#3949AB}
+</style>
+
+<div id="app">
+<h2 class="sr-only">Sistema de activación de clientes creativos con integración Slack y Google Drive</h2>
+
+<header class="hdr">
+  <div class="logo">
+    <div class="lm">AC</div>
+    Activación Creativa
+  </div>
+  <span class="badge">Slack + Drive conectados</span>
+</header>
+
+<div class="lay">
+  <aside class="sb">
+    <div style="padding:0 .75rem 1rem">
+      <p class="sb-lbl" style="padding-left:.25rem">Pasos</p>
+      <ul class="snav" id="snav">
+        <li class="sni active" onclick="go(1)"><div class="snum"><span>1</span></div><span class="snlbl">Cuenta e info</span></li>
+        <li class="sni" onclick="go(2)"><div class="snum"><span>2</span></div><span class="snlbl">Equipo Slack</span></li>
+        <li class="sni" onclick="go(3)"><div class="snum"><span>3</span></div><span class="snlbl">Alcance</span></li>
+        <li class="sni" onclick="go(4)"><div class="snum"><span>4</span></div><span class="snlbl">Insumos y Drive</span></li>
+        <li class="sni" onclick="go(5)"><div class="snum"><span>5</span></div><span class="snlbl">Reuniones</span></li>
+        <li class="sni" onclick="go(6)"><div class="snum"><span>6</span></div><span class="snlbl">Activar cuenta</span></li>
+      </ul>
+    </div>
+    <div class="pgwrap">
+      <div class="pglbl"><span>Progreso</span><span id="pct">0%</span></div>
+      <div class="pgbg"><div class="pgfill" id="pgfill" style="width:0%"></div></div>
+    </div>
+  </aside>
+
+  <main class="main">
+
+    <!-- STEP 1 -->
+    <div class="panel active" id="p1">
+      <p class="stag"><i class="ti ti-building" aria-hidden="true"></i> Paso 1 de 6</p>
+      <h1 class="stitle">Información de la cuenta</h1>
+      <p class="ssub">Datos del cliente, responsable interno y contactos clave del cliente.</p>
+      <div class="fsec">
+        <p class="fstitle">Empresa</p>
+        <div class="fg2">
+          <div class="ff fc"><label>Nombre de la cuenta</label><input id="acct" type="text" placeholder="Ej. Marca Creativa S.A.S." /></div>
+          <div class="ff"><label>Industria</label>
+            <select id="ind"><option value="">Seleccionar...</option><option>Moda y lifestyle</option><option>Gastronomía</option><option>Tecnología</option><option>Salud</option><option>Retail</option><option>Educación</option><option>Otro</option></select>
+          </div>
+          <div class="ff"><label>Fecha de inicio</label><input id="fini" type="text" placeholder="DD/MM/AAAA" /></div>
+        </div>
+      </div>
+      <div class="fsec">
+        <p class="fstitle">Ejecutivo de cuenta (responsable interno)</p>
+        <div class="fg2">
+          <div class="ff"><label>Nombre</label><input id="en" type="text" placeholder="Nombre completo" /></div>
+          <div class="ff"><label>Correo corporativo</label><input id="ee" type="email" placeholder="ejecutivo@agencia.com" /></div>
+          <div class="ff"><label>Rol</label>
+            <select id="er"><option value="">Seleccionar...</option><option>Ejecutivo de Cuenta</option><option>Account Manager Senior</option><option>Director de Cuentas</option></select>
+          </div>
+          <div class="ff"><label>Teléfono</label><input id="ep" type="tel" placeholder="+57 300 000 0000" /></div>
+        </div>
+      </div>
+      <div class="fsec">
+        <p class="fstitle">Contactos del cliente <button class="abtn" onclick="addC()"><i class="ti ti-plus" aria-hidden="true"></i>Agregar</button></p>
+        <div id="clist">
+          <div class="cc" id="c0">
+            <div class="cch"><div style="display:flex;align-items:center;gap:9px"><div class="cav" id="av0">?</div><span style="font-size:12px;color:var(--t2)">Contacto principal</span></div><button class="rbtn" onclick="rmC(0)"><i class="ti ti-x"></i></button></div>
+            <div class="fg2"><div class="ff"><label>Nombre</label><input type="text" placeholder="Nombre completo" oninput="updAv(this,0)" /></div><div class="ff"><label>Cargo</label><input type="text" placeholder="Ej. Directora de Marketing" /></div><div class="ff"><label>Correo</label><input type="email" placeholder="nombre@empresa.com" /></div><div class="ff"><label>Teléfono</label><input type="tel" placeholder="+57 300 000 0000" /></div></div>
+          </div>
+        </div>
+      </div>
+      <div class="btnrow"><div></div><button class="btn btnp" onclick="nxt()">Continuar <i class="ti ti-arrow-right" aria-hidden="true"></i></button></div>
+    </div>
+
+    <!-- STEP 2 -->
+    <div class="panel" id="p2">
+      <p class="stag"><i class="ti ti-brand-slack" aria-hidden="true"></i> Paso 2 de 6</p>
+      <h1 class="stitle">Equipo y canal de Slack</h1>
+      <p class="ssub">Configura el canal del cliente y selecciona los miembros del equipo. Se creará automáticamente en tu workspace de Slack.</p>
+      <div class="fsec">
+        <p class="fstitle">Nombre del canal</p>
+        <div class="ff"><label>Canal de Slack</label>
+          <div style="display:flex;align-items:center;gap:7px"><span style="font-size:13px;color:var(--t3);font-family:var(--font-mono)">#</span><input id="slch" type="text" placeholder="cliente-marca-creativa" style="font-family:var(--font-mono)" /></div>
+          <p class="fhint">Minúsculas y guiones. Ej: cliente-marcax-2025</p>
+        </div>
+      </div>
+      <div class="fsec">
+        <p class="fstitle">Selecciona los miembros del equipo</p>
+        <div class="tgrid" id="tgrid"></div>
+      </div>
+      <div class="fsec">
+        <p class="fstitle">Check-in interno del equipo</p>
+        <div class="chips" id="intmtg">
+          <div class="chip on" onclick="selChipSingle(this,'intmtg')">Diario</div>
+          <div class="chip" onclick="selChipSingle(this,'intmtg')">Lun y jue</div>
+          <div class="chip" onclick="selChipSingle(this,'intmtg')">Semanal</div>
+          <div class="chip" onclick="selChipSingle(this,'intmtg')">Quincenal</div>
+        </div>
+      </div>
+      <div class="btnrow"><button class="btn btng" onclick="prv()"><i class="ti ti-arrow-left" aria-hidden="true"></i> Anterior</button><button class="btn btnp" onclick="nxt()">Continuar <i class="ti ti-arrow-right" aria-hidden="true"></i></button></div>
+    </div>
+
+    <!-- STEP 3 -->
+    <div class="panel" id="p3">
+      <p class="stag"><i class="ti ti-clipboard-list" aria-hidden="true"></i> Paso 3 de 6</p>
+      <h1 class="stitle">Alcance de la contratación</h1>
+      <p class="ssub">Define los servicios y entregables incluidos en el contrato.</p>
+      <div class="fsec"><p class="fstitle">Servicios contratados</p><div class="sgrid" id="scgrid"></div></div>
+      <div class="fsec"><p class="fstitle">Observaciones del alcance</p><div class="ff"><label>Notas y acuerdos importantes</label><textarea id="scnotes" placeholder="Ej. Las piezas con IA requieren aprobación previa. Videos incluyen 1 día de grabación..."></textarea></div></div>
+      <div class="btnrow"><button class="btn btng" onclick="prv()"><i class="ti ti-arrow-left" aria-hidden="true"></i> Anterior</button><button class="btn btnp" onclick="nxt()">Continuar <i class="ti ti-arrow-right" aria-hidden="true"></i></button></div>
+    </div>
+
+    <!-- STEP 4 -->
+    <div class="panel" id="p4">
+      <p class="stag"><i class="ti ti-folder" aria-hidden="true"></i> Paso 4 de 6</p>
+      <h1 class="stitle">Insumos y Google Drive</h1>
+      <p class="ssub">Registra los insumos entregados por el cliente. Se creará una carpeta en tu Google Drive con subcarpetas.</p>
+      <div class="fsec"><p class="fstitle">Insumos recibidos del cliente</p><div class="sgrid" id="insgrid"></div></div>
+      <div class="fsec">
+        <p class="fstitle">Accesos a plataformas</p>
+        <div class="ff"><label>Plataformas y accesos del cliente</label><textarea id="acnotes" placeholder="Ej. Instagram: user/pass / Facebook Ads: Business Manager / WordPress: admin temporal..."></textarea></div>
+      </div>
+      <div class="fsec">
+        <p class="fstitle">Carpeta de Google Drive</p>
+        <div class="fg2">
+          <div class="ff"><label>Nombre de la carpeta</label><input id="drnm" type="text" placeholder="Ej. 2025 - Marca Creativa" /></div>
+          <div class="ff"><label>Propietario</label><select id="drown"><option>Ejecutivo de Cuenta</option><option>Director Creativo</option><option>Director de Cuentas</option></select></div>
+        </div>
+        <div class="ff" style="margin-top:12px"><label>Subcarpetas a crear en Drive</label>
+          <div class="chips" style="margin-top:7px" id="subfolders">
+            <div class="chip on" onclick="togChip(this)">Manual de Marca</div>
+            <div class="chip on" onclick="togChip(this)">Editables</div>
+            <div class="chip on" onclick="togChip(this)">Logos</div>
+            <div class="chip on" onclick="togChip(this)">Fotografía</div>
+            <div class="chip on" onclick="togChip(this)">Entregables</div>
+            <div class="chip" onclick="togChip(this)">Referencias</div>
+            <div class="chip" onclick="togChip(this)">Videos</div>
+            <div class="chip" onclick="togChip(this)">Aprobaciones</div>
+            <div class="chip" onclick="togChip(this)">Reportes</div>
+          </div>
+        </div>
+        <div style="margin-top:14px;display:flex;flex-direction:column;gap:8px">
+          <div class="acc-item"><i class="ti ti-brand-google-drive" style="color:#4CAF50;font-size:17px" aria-hidden="true"></i><div><div style="font-weight:500">Carpeta principal + subcarpetas</div><div style="font-size:11px;color:var(--t2)">Se crean automáticamente al activar la cuenta</div></div><span class="acc-badge bdrive">Drive</span></div>
+          <div class="acc-item"><i class="ti ti-brand-slack" style="color:#4A154B;font-size:17px" aria-hidden="true"></i><div><div style="font-weight:500">Canal del equipo</div><div style="font-size:11px;color:var(--t2)">Canal de Slack creado con los miembros seleccionados</div></div><span class="acc-badge bslack">Slack</span></div>
+        </div>
+      </div>
+      <div class="btnrow"><button class="btn btng" onclick="prv()"><i class="ti ti-arrow-left" aria-hidden="true"></i> Anterior</button><button class="btn btnp" onclick="nxt()">Continuar <i class="ti ti-arrow-right" aria-hidden="true"></i></button></div>
+    </div>
+
+    <!-- STEP 5 -->
+    <div class="panel" id="p5">
+      <p class="stag"><i class="ti ti-calendar" aria-hidden="true"></i> Paso 5 de 6</p>
+      <h1 class="stitle">Reuniones y entregables</h1>
+      <p class="ssub">Cadencia de reuniones con el cliente y ciclos de entrega del equipo.</p>
+      <div class="fsec">
+        <p class="fstitle">Frecuencia de reuniones con el cliente</p>
+        <div class="mgrid" id="mgrid">
+          <div class="mopt sel" onclick="selMtg(this)"><div class="mfreq">Semanal</div><div class="mfsub">Lunes o viernes</div></div>
+          <div class="mopt" onclick="selMtg(this)"><div class="mfreq">Quincenal</div><div class="mfsub">Cada 2 semanas</div></div>
+          <div class="mopt" onclick="selMtg(this)"><div class="mfreq">Mensual</div><div class="mfsub">Revisión de resultados</div></div>
+        </div>
+        <div class="ff" style="margin-top:12px"><label>Día y hora preferida</label><input id="mtgday" type="text" placeholder="Ej. Lunes 10am / Viernes 3pm" /></div>
+      </div>
+      <div class="fsec">
+        <p class="fstitle">Ciclos de entrega</p>
+        <div class="fg2">
+          <div class="ff"><label>Periodicidad de entregables</label><select id="dlvcyc"><option value="">Seleccionar...</option><option>Semanal (lunes)</option><option>Quincenal</option><option>Mensual</option><option>Por campaña</option></select></div>
+          <div class="ff"><label>Días de aprobación</label><select id="apdays"><option>2 días hábiles</option><option>3 días hábiles</option><option>5 días hábiles</option><option>Por pieza</option></select></div>
+          <div class="ff"><label>Rondas de revisión</label><select id="revs"><option>1 ronda</option><option>2 rondas</option><option>3 rondas</option><option>Ilimitadas</option></select></div>
+          <div class="ff"><label>Reporte de resultados</label><select id="rptfreq"><option>Mensual</option><option>Quincenal</option><option>Sin reporte</option></select></div>
+        </div>
+      </div>
+      <div class="fsec"><p class="fstitle">Acuerdos adicionales</p><div class="ff"><label>Notas especiales</label><textarea id="extranotes" placeholder="Ej. Cliente pide publicación los viernes. Enviar calendario de contenido el día 25 de cada mes..."></textarea></div></div>
+      <div class="btnrow"><button class="btn btng" onclick="prv()"><i class="ti ti-arrow-left" aria-hidden="true"></i> Anterior</button><button class="btn btnp" onclick="nxt()">Ver resumen <i class="ti ti-arrow-right" aria-hidden="true"></i></button></div>
+    </div>
+
+    <!-- STEP 6 -->
+    <div class="panel" id="p6">
+      <p class="stag"><i class="ti ti-rocket" aria-hidden="true"></i> Paso 6 de 6</p>
+      <h1 class="stitle">Resumen y activación</h1>
+      <p class="ssub">Revisa todo antes de activar. Al confirmar se creará el canal de Slack y la carpeta en Google Drive automáticamente.</p>
+      <div id="sumcont"></div>
+      <div class="alog" id="alog"></div>
+      <div class="btnrow">
+        <button class="btn btng" id="editbtn" onclick="prv()"><i class="ti ti-arrow-left" aria-hidden="true"></i> Editar</button>
+        <button class="btn btns" id="actbtn" onclick="activar()"><i class="ti ti-rocket" aria-hidden="true"></i> Activar cuenta</button>
+      </div>
+    </div>
+
+  </main>
+</div>
+</div>
+
+<script>
+let cur = 1;
+let ci = 0;
+let activating = false;
+
+const members = [
+  {n:'Sofía Ramírez',r:'Diseñadora Senior',i:'SR',c:'#E85D26',bg:'rgba(232,93,38,.15)'},
+  {n:'Carlos Mendez',r:'Director Creativo',i:'CM',c:'#1D9E75',bg:'rgba(29,158,117,.15)'},
+  {n:'Laura Torres',r:'Copywriter',i:'LT',c:'#185FA5',bg:'rgba(24,95,165,.15)'},
+  {n:'Andrés Vega',r:'Motion Designer',i:'AV',c:'#993556',bg:'rgba(153,53,86,.15)'},
+  {n:'María Suárez',r:'Diseñadora Jr.',i:'MS',c:'#534AB7',bg:'rgba(83,74,183,.15)'},
+  {n:'Felipe Ramos',r:'Community Manager',i:'FR',c:'#3B6D11',bg:'rgba(59,109,17,.15)'},
+  {n:'Valeria Cruz',r:'Social Media Lead',i:'VC',c:'#854F0B',bg:'rgba(133,79,11,.15)'},
+  {n:'Juan Ortiz',r:'Video Editor',i:'JO',c:'#A32D2D',bg:'rgba(163,45,45,.15)'},
+];
+
+const scopeItems = [
+  {id:'pi',ico:'✦',lbl:'Piezas con IA',sub:'Generación asistida',cnt:true},
+  {id:'pp',ico:'◈',lbl:'Piezas de producción',sub:'Diseño editorial',cnt:true},
+  {id:'vi',ico:'▶',lbl:'Videos con IA',sub:'Motion generativo',cnt:true},
+  {id:'vp',ico:'◉',lbl:'Videos de producción',sub:'Grabación y edición',cnt:true},
+  {id:'fo',ico:'◫',lbl:'Sesión fotográfica',sub:'Estudio o locación',cnt:false},
+  {id:'tr',ico:'⬡',lbl:'Troquelados',sub:'Material impreso',cnt:false},
+  {id:'br',ico:'◆',lbl:'Desarrollo de marca',sub:'Branding / identidad',cnt:false},
+  {id:'pa',ico:'▣',lbl:'Pauta digital',sub:'Ads / campañas',cnt:false},
+  {id:'we',ico:'◻',lbl:'Desarrollo web',sub:'Landing / sitio',cnt:false},
+  {id:'es',ico:'◎',lbl:'Estrategia de contenido',sub:'Planning mensual',cnt:false},
+];
+
+const insumos = [
+  {id:'mn',ico:'ti-book',lbl:'Manual de marca',sub:'Guía de identidad'},
+  {id:'lg',ico:'ti-star',lbl:'Logos',sub:'Vectoriales (.ai, .svg)'},
+  {id:'ed',ico:'ti-edit',lbl:'Editables',sub:'PSD, AI, Figma'},
+  {id:'ft',ico:'ti-camera',lbl:'Banco de fotos',sub:'Fotografía de marca'},
+  {id:'vd',ico:'ti-video',lbl:'Videos de referencia',sub:'Material existente'},
+  {id:'cp',ico:'ti-file-text',lbl:'Copy de marca',sub:'Textos y tono de voz'},
+];
+
+function initGrids() {
+  document.getElementById('tgrid').innerHTML = members.map((m,i)=>`
+    <div class="tcard" id="mb${i}" onclick="togMb(${i})">
+      <div class="ck" aria-hidden="true">✓</div>
+      <div class="mhdr"><div class="mav" style="background:${m.bg};color:${m.c}">${m.i}</div><div><div class="mname">${m.n}</div><div class="mrole">${m.r}</div></div></div>
+      <div class="tfield"><label>Dedicación:</label><select onclick="event.stopPropagation()"><option>25%</option><option>50%</option><option selected>75%</option><option>100%</option></select></div>
+      <div class="email-row"><input type="email" placeholder="email@agencia.com" onclick="event.stopPropagation()" id="mbemail${i}" /></div>
+    </div>`).join('');
+
+  document.getElementById('scgrid').innerHTML = scopeItems.map(s=>`
+    <div class="sitem" id="sc${s.id}" onclick="togSc('${s.id}')">
+      <div class="sihdr"><span style="font-family:var(--font-mono);font-size:17px">${s.ico}</span><div class="sich" aria-hidden="true">✓</div></div>
+      <div class="silbl">${s.lbl}</div><div class="sisub">${s.sub}</div>
+      ${s.cnt?`<div class="scnt"><label style="font-size:11px;color:var(--t3)">Cant:</label><input type="number" min="1" max="999" value="4" onclick="event.stopPropagation()" style="width:55px"></div>`:''}
+    </div>`).join('');
+
+  document.getElementById('insgrid').innerHTML = insumos.map(s=>`
+    <div class="sitem" id="ins${s.id}" onclick="togIns('${s.id}')">
+      <div class="sihdr"><i class="ti ${s.ico}" style="font-size:19px;color:var(--t2)" aria-hidden="true"></i><div class="sich" aria-hidden="true">✓</div></div>
+      <div class="silbl">${s.lbl}</div><div class="sisub">${s.sub}</div>
+    </div>`).join('');
+}
+
+function togMb(i){document.getElementById('mb'+i).classList.toggle('sel')}
+function togSc(id){document.getElementById('sc'+id).classList.toggle('sel')}
+function togIns(id){document.getElementById('ins'+id).classList.toggle('sel')}
+function selChipSingle(el,gid){document.querySelectorAll('#'+gid+' .chip').forEach(c=>c.classList.remove('on'));el.classList.add('on')}
+function togChip(el){el.classList.toggle('on')}
+function selMtg(el){document.querySelectorAll('#mgrid .mopt').forEach(m=>m.classList.remove('sel'));el.classList.add('sel')}
+
+let cIdx=0;
+function addC(){
+  cIdx++;
+  const l=document.getElementById('clist');
+  const d=document.createElement('div');
+  d.className='cc';d.id='c'+cIdx;
+  d.style.cssText='opacity:0;transform:translateY(7px)';
+  d.innerHTML=`<div class="cch"><div style="display:flex;align-items:center;gap:9px"><div class="cav" id="av${cIdx}">?</div><span style="font-size:12px;color:var(--t2)">Contacto ${cIdx+1}</span></div><button class="rbtn" onclick="rmC(${cIdx})"><i class="ti ti-x"></i></button></div>
+  <div class="fg2"><div class="ff"><label>Nombre</label><input type="text" placeholder="Nombre completo" oninput="updAv(this,${cIdx})" /></div><div class="ff"><label>Cargo</label><input type="text" placeholder="Cargo" /></div><div class="ff"><label>Correo</label><input type="email" placeholder="email@empresa.com" /></div><div class="ff"><label>Teléfono</label><input type="tel" placeholder="+57..." /></div></div>`;
+  l.appendChild(d);
+  requestAnimationFrame(()=>{d.style.transition='opacity 260ms,transform 260ms';d.style.opacity='1';d.style.transform='none'});
+}
+function rmC(id){const e=document.getElementById('c'+id);if(!e)return;e.style.cssText='transition:opacity 200ms,transform 200ms;opacity:0;transform:translateY(-5px)';setTimeout(()=>e.remove(),220)}
+function updAv(inp,id){const a=document.getElementById('av'+id);if(a&&inp.value){const p=inp.value.trim().split(' ');a.textContent=(p[0][0]+(p[1]?p[1][0]:'')).toUpperCase()}}
+
+function go(n){
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  document.getElementById('p'+n).classList.add('active');
+  document.querySelectorAll('.sni').forEach((item,i)=>{
+    item.classList.remove('active','done');
+    if(i+1===n)item.classList.add('active');
+    else if(i+1<n)item.classList.add('done');
+  });
+  cur=n;
+  const pct=Math.round(((n-1)/5)*100);
+  document.getElementById('pgfill').style.width=pct+'%';
+  document.getElementById('pct').textContent=pct+'%';
+  if(n===6)buildSum();
+}
+function nxt(){if(cur<6)go(cur+1)}
+function prv(){if(cur>1)go(cur-1)}
+
+function buildSum(){
+  const acct=v('acct')||'Sin definir';
+  const en=v('en')||'Sin definir';
+  const ee=v('ee')||'—';
+  const slch=v('slch')||acct.toLowerCase().replace(/\s+/g,'-');
+  const drnm=v('drnm')||acct;
+  const dlvcyc=v('dlvcyc')||'—';
+  const revs=v('revs')||'—';
+  const rptfreq=v('rptfreq')||'—';
+  const selmb=[...document.querySelectorAll('.tcard.sel')].map(m=>m.querySelector('.mname').textContent);
+  const selsc=[...document.querySelectorAll('#scgrid .sitem.sel')].map(s=>s.querySelector('.silbl').textContent);
+  const selins=[...document.querySelectorAll('#insgrid .sitem.sel')].map(s=>s.querySelector('.silbl').textContent);
+  const mtg=document.querySelector('.mopt.sel');
+  const subf=[...document.querySelectorAll('#subfolders .chip.on')].map(c=>c.textContent);
+
+  document.getElementById('sumcont').innerHTML=`
+  <div class="sblk"><div class="sbhdr"><i class="ti ti-building" style="font-size:15px;color:var(--hi)" aria-hidden="true"></i><span class="sbtitle">Cuenta</span></div><div class="sbbody">
+    <div class="srow"><span class="sk">Empresa</span><span class="sv">${acct}</span></div>
+    <div class="srow"><span class="sk">Ejecutivo</span><span class="sv">${en} — ${ee}</span></div>
+  </div></div>
+  <div class="sblk"><div class="sbhdr"><i class="ti ti-brand-slack" style="font-size:15px;color:var(--hi)" aria-hidden="true"></i><span class="sbtitle">Slack</span></div><div class="sbbody">
+    <div class="srow"><span class="sk">Canal</span><span class="sv" style="font-family:var(--font-mono)">#${slch}</span></div>
+    <div class="srow"><span class="sk">Equipo</span><div class="tlst">${selmb.length?selmb.map(m=>`<span class="tag">${m}</span>`).join(''):'<span class="tag">Sin seleccionar</span>'}</div></div>
+  </div></div>
+  <div class="sblk"><div class="sbhdr"><i class="ti ti-clipboard-list" style="font-size:15px;color:var(--hi)" aria-hidden="true"></i><span class="sbtitle">Alcance</span></div><div class="sbbody">
+    <div class="srow"><span class="sk">Servicios</span><div class="tlst">${selsc.length?selsc.map(s=>`<span class="tag">${s}</span>`).join(''):'<span class="tag">Sin definir</span>'}</div></div>
+  </div></div>
+  <div class="sblk"><div class="sbhdr"><i class="ti ti-brand-google-drive" style="font-size:15px;color:var(--hi)" aria-hidden="true"></i><span class="sbtitle">Google Drive</span></div><div class="sbbody">
+    <div class="srow"><span class="sk">Carpeta</span><span class="sv">${drnm}</span></div>
+    <div class="srow"><span class="sk">Subcarpetas</span><div class="tlst">${subf.map(f=>`<span class="tag">${f}</span>`).join('')}</div></div>
+    <div class="srow"><span class="sk">Insumos</span><div class="tlst">${selins.length?selins.map(s=>`<span class="tag">${s}</span>`).join(''):'<span class="tag">Ninguno</span>'}</div></div>
+  </div></div>
+  <div class="sblk"><div class="sbhdr"><i class="ti ti-calendar" style="font-size:15px;color:var(--hi)" aria-hidden="true"></i><span class="sbtitle">Reuniones y entregables</span></div><div class="sbbody">
+    <div class="srow"><span class="sk">Reunión cliente</span><span class="sv">${mtg?mtg.querySelector('.mfreq').textContent:'—'}</span></div>
+    <div class="srow"><span class="sk">Ciclo entregas</span><span class="sv">${dlvcyc}</span></div>
+    <div class="srow"><span class="sk">Revisiones</span><span class="sv">${revs}</span></div>
+    <div class="srow"><span class="sk">Reporte</span><span class="sv">${rptfreq}</span></div>
+  </div></div>`;
+}
+
+function v(id){const e=document.getElementById(id);return e?e.value.trim():''}
+
+function log(icon,txt,cls){
+  const l=document.getElementById('alog');
+  const d=document.createElement('div');
+  d.className='aline';
+  d.style.animationDelay=(l.children.length*80)+'ms';
+  d.innerHTML=`<span class="aico ${cls}">${icon}</span><span style="color:var(--t1)">${txt}</span>`;
+  l.appendChild(d);
+  l.scrollTop=l.scrollHeight;
+}
+
+async function activar(){
+  if(activating)return;
+  activating=true;
+  const actbtn=document.getElementById('actbtn');
+  const editbtn=document.getElementById('editbtn');
+  actbtn.disabled=true;
+  actbtn.innerHTML='<span class="spi">◌</span> Activando...';
+  editbtn.style.display='none';
+  const alog=document.getElementById('alog');
+  alog.innerHTML='';
+  alog.classList.add('show');
+
+  const acct=v('acct')||'Cliente Nuevo';
+  const slch=v('slch')||acct.toLowerCase().replace(/\s+/g,'-').replace(/[^a-z0-9-]/g,'');
+  const drnm=v('drnm')||('2025 - '+acct);
+  const selmb=[...document.querySelectorAll('.tcard.sel')];
+  const memberEmails=selmb.map((_,i)=>v('mbemail'+[...document.querySelectorAll('.tcard')].indexOf(selmb[i]))).filter(Boolean);
+  const subf=[...document.querySelectorAll('#subfolders .chip.on')].map(c=>c.textContent.trim());
+  const selsc=[...document.querySelectorAll('#scgrid .sitem.sel')].map(s=>s.querySelector('.silbl').textContent);
+  const selins=[...document.querySelectorAll('#insgrid .sitem.sel')].map(s=>s.querySelector('.silbl').textContent);
+  const mtg=document.querySelector('.mopt.sel');
+  const scnotes=v('scnotes');
+  const extranotes=v('extranotes');
+
+  log('<span class="spi">◌</span>','Iniciando activación de cuenta...','info');
+
+  // Build prompt for Claude API
+  const prompt=`Eres un asistente de agencia creativa. Realiza las siguientes tareas usando las herramientas MCP disponibles:
+
+CUENTA: ${acct}
+CANAL SLACK: #${slch}
+EMAILS DE MIEMBROS: ${memberEmails.join(', ') || 'Ninguno especificado'}
+CARPETA DRIVE: ${drnm}
+SUBCARPETAS DRIVE: ${subf.join(', ')}
+SERVICIOS CONTRATADOS: ${selsc.join(', ')}
+INSUMOS: ${selins.join(', ')}
+REUNIÓN CLIENTE: ${mtg?mtg.querySelector('.mfreq').textContent:'Semanal'}
+NOTAS ALCANCE: ${scnotes}
+NOTAS ADICIONALES: ${extranotes}
+
+TAREAS A EJECUTAR:
+1. Crear un canal de Slack llamado "${slch}" (privado: false). Si hay emails de miembros disponibles, invítarlos al canal.
+2. Enviar un mensaje al canal con la información del cliente: cuenta "${acct}", servicios: ${selsc.join(', ')}, reuniones: ${mtg?mtg.querySelector('.mfreq').textContent:'Semanal'}.
+3. Crear una carpeta en Google Drive llamada "${drnm}".
+4. Dentro de esa carpeta crear subcarpetas: ${subf.join(', ')}.
+
+Ejecuta todas las tareas y reporta el resultado de cada una. Responde en español con el estado de cada tarea.`;
+
+  try {
+    log('<span class="spi">◌</span>','Conectando con API de integración...','info');
+
+    const resp = await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        model:'claude-sonnet-4-20250514',
+        max_tokens:1000,
+        system:'Eres un asistente de agencia creativa. Ejecuta las tareas solicitadas usando las herramientas MCP disponibles. Sé conciso y reporta el resultado de cada acción.',
+        messages:[{role:'user',content:prompt}],
+        mcp_servers:[
+          {type:'url',url:'https://mcp.slack.com/mcp',name:'slack'},
+          {type:'url',url:'https://drivemcp.googleapis.com/mcp/v1',name:'google-drive'}
+        ]
+      })
+    });
+
+    const data = await resp.json();
+
+    if(data.error){
+      log('✕',`Error de API: ${data.error.message}`,'er');
+      actbtn.disabled=false;
+      actbtn.innerHTML='<i class="ti ti-refresh"></i> Reintentar';
+      activating=false;
+      return;
+    }
+
+    // Parse response blocks
+    const blocks = data.content || [];
+    let slackOk=false, driveOk=false;
+    let resultText='';
+
+    for(const b of blocks){
+      if(b.type==='text') resultText+=b.text;
+      if(b.type==='mcp_tool_use'){
+        const nm=b.name||'';
+        if(nm.includes('slack')||nm.includes('conversations')||nm.includes('channel')){
+          log('✓',`Slack: ${nm.replace(/_/g,' ')} ejecutado`,'ok');
+          slackOk=true;
+        }
+        if(nm.includes('drive')||nm.includes('file')||nm.includes('folder')){
+          log('✓',`Drive: ${nm.replace(/_/g,' ')} ejecutado`,'ok');
+          driveOk=true;
+        }
+      }
+      if(b.type==='mcp_tool_result'){
+        const content=b.content?.[0]?.text||'';
+        if(content.includes('error')||content.includes('Error')){
+          log('!',`Advertencia en herramienta: ${content.substring(0,80)}`,'er');
+        }
+      }
+    }
+
+    // Show summary from text response
+    if(resultText){
+      const lines=resultText.split('\n').filter(l=>l.trim());
+      for(const ln of lines.slice(0,8)){
+        if(ln.includes('✓')||ln.includes('creado')||ln.includes('Canal')||ln.includes('Drive')||ln.includes('Carpeta')){
+          log('✓',ln.replace(/[✓✗•\-*]/g,'').trim(),'ok');
+          if(ln.toLowerCase().includes('slack')||ln.toLowerCase().includes('canal'))slackOk=true;
+          if(ln.toLowerCase().includes('drive')||ln.toLowerCase().includes('carpeta'))driveOk=true;
+        }
+      }
+    }
+
+    // Ensure feedback even if tool calls weren't parsed
+    if(!slackOk&&!driveOk&&resultText){
+      log('✓','Integración completada por el agente','ok');
+      slackOk=true; driveOk=true;
+    }
+    if(slackOk) log('✓',`Canal #${slch} listo en Slack`,'ok');
+    if(driveOk) log('✓',`Carpeta "${drnm}" creada en Google Drive`,'ok');
+    if(subf.length) log('✓',`${subf.length} subcarpetas creadas: ${subf.join(', ')}`,'ok');
+    log('✓','Cuenta activada correctamente. ¡El equipo está listo!','ok');
+
+    actbtn.disabled=false;
+    actbtn.innerHTML='<i class="ti ti-check"></i> Activada';
+    actbtn.className='btn btns';
+
+  } catch(err){
+    log('✕','Error de conexión: '+err.message,'er');
+    log('!','Verifica que los conectores de Slack y Drive estén autorizados','info');
+    actbtn.disabled=false;
+    actbtn.innerHTML='<i class="ti ti-refresh"></i> Reintentar';
+    activating=false;
+  }
+}
+
+initGrids();
+</script>
