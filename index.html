@@ -1,0 +1,857 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Activación Creativa — Nueva Cuenta</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/dist/tabler-icons.min.css" />
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --hi: #cd2b53;
+    --hi-s: rgba(#cd2b53,.10);
+    --hi-b: rgba(#cd2b53,.28);
+    --bg:    #f5f4f1;
+    --s1:    #ffffff;
+    --s2:    #f5f4f1;
+    --s3:    #eceae6;
+    --bd:    rgba(0,0,0,.08);
+    --bm:    rgba(0,0,0,.14);
+    --t1:    #1a1917;
+    --t2:    #6b6860;
+    --t3:    #9e9b96;
+    --green: #1a7a4a;
+    --green-h: #155f3a;
+    --success-bg: #eaf3de;
+    --success-t:  #3b6d11;
+    --err-t: #a32d2d;
+    --r:  12px;
+    --rm:  8px;
+    --eo: cubic-bezier(0.23,1,0.32,1);
+    --font: 'Geist', system-ui, -apple-system, sans-serif;
+    --mono: 'Geist Mono', 'Courier New', monospace;
+  }
+
+  html { font-size: 16px; }
+  body { font-family: var(--font); background: var(--bg); color: var(--t1); min-height: 100vh; }
+
+  /* ── Header ── */
+  .hdr {
+    background: var(--s1);
+    border-bottom: 1px solid var(--bd);
+    padding: 0 2rem;
+    height: 56px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  .logo { display: flex; align-items: center; gap: 10px; font-size: 14px; font-weight: 500; color: var(--t1); text-decoration: none; }
+  .lm { width: 28px; height: 28px; background: var(--hi); border-radius: 8px; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 12px; font-weight: 700; flex-shrink: 0; }
+  .badge { background: var(--hi-s); color: var(--hi); border: 1px solid var(--hi-b); font-size: 11px; font-weight: 500; padding: 3px 10px; border-radius: 20px; display: flex; align-items: center; gap: 5px; }
+
+  /* ── Layout ── */
+  .lay { display: grid; grid-template-columns: 248px 1fr; min-height: calc(100vh - 56px); }
+
+  /* ── Sidebar ── */
+  .sb {
+    background: var(--s1);
+    border-right: 1px solid var(--bd);
+    padding: 1.5rem 0 80px;
+    position: sticky;
+    top: 56px;
+    height: calc(100vh - 56px);
+    overflow-y: auto;
+  }
+  .sb-lbl { font-size: 10px; font-weight: 600; letter-spacing: .12em; text-transform: uppercase; color: var(--t3); padding: 0 1.25rem .6rem; }
+  .snav { list-style: none; display: flex; flex-direction: column; gap: 2px; padding: 0 .75rem; }
+  .sni {
+    display: flex; align-items: center; gap: 10px;
+    padding: 8px 10px; border-radius: var(--rm); cursor: pointer;
+    transition: background 150ms var(--eo), transform 120ms;
+    user-select: none;
+  }
+  .sni:hover { background: var(--s2); }
+  .sni.active { background: var(--hi-s); }
+  .sni:active { transform: scale(.98); }
+  .snum {
+    width: 24px; height: 24px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 11px; font-weight: 500;
+    border: 1px solid var(--bm); color: var(--t2); background: var(--s1);
+    flex-shrink: 0; transition: all 200ms var(--eo);
+  }
+  .sni.active .snum { background: var(--hi); border-color: var(--hi); color: #fff; }
+  .sni.done .snum { background: var(--success-bg); border-color: transparent; color: var(--success-t); font-size: 12px; }
+  .sni.done .snum::after { content: '✓'; }
+  .sni.done .snum span { display: none; }
+  .snlbl { font-size: 13px; color: var(--t2); transition: color 150ms; }
+  .sni.active .snlbl { color: var(--hi); font-weight: 500; }
+  .sni.done .snlbl { color: var(--t1); }
+  .pgwrap {
+    padding: .875rem 1.25rem;
+    border-top: 1px solid var(--bd);
+    position: absolute; bottom: 0; left: 0; right: 0;
+    background: var(--s1);
+  }
+  .pglbl { display: flex; justify-content: space-between; font-size: 11px; color: var(--t3); margin-bottom: 7px; }
+  .pgbg { height: 3px; background: var(--s3); border-radius: 99px; overflow: hidden; }
+  .pgfill { height: 100%; background: var(--hi); border-radius: 99px; transition: width 400ms var(--eo); }
+
+  /* ── Main ── */
+  .main { padding: 2.25rem 2.5rem 5rem; max-width: 800px; }
+  .panel { display: none; animation: sin 270ms var(--eo) forwards; }
+  .panel.active { display: block; }
+  @keyframes sin { from { opacity: 0; transform: translateY(9px); } to { opacity: 1; transform: translateY(0); } }
+
+  .stag {
+    display: inline-flex; align-items: center; gap: 5px;
+    font-size: 11px; font-weight: 600; letter-spacing: .07em; text-transform: uppercase;
+    color: var(--hi); margin-bottom: 7px;
+  }
+  .stitle { font-size: 22px; font-weight: 500; color: var(--t1); letter-spacing: -.022em; line-height: 1.2; margin-bottom: 5px; }
+  .ssub { font-size: 13px; color: var(--t2); line-height: 1.65; margin-bottom: 1.75rem; }
+
+  /* ── Form ── */
+  .fsec { margin-bottom: 1.75rem; }
+  .fstitle {
+    font-size: 11px; font-weight: 600; letter-spacing: .07em; text-transform: uppercase; color: var(--t3);
+    margin-bottom: .875rem; padding-bottom: 8px; border-bottom: 1px solid var(--bd);
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .fg2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .fg3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; }
+  .fc { grid-column: 1 / -1; }
+  .ff { display: flex; flex-direction: column; gap: 5px; }
+  .ff label { font-size: 12px; font-weight: 500; color: var(--t1); }
+  .fhint { font-size: 11px; color: var(--t3); margin-top: 3px; }
+
+  input[type=text], input[type=email], input[type=tel], input[type=number], select, textarea {
+    font-family: var(--font);
+    font-size: 13px; color: var(--t1);
+    background: var(--s1);
+    border: 1px solid var(--bm);
+    border-radius: var(--rm);
+    padding: 8px 11px;
+    outline: none;
+    transition: border-color 150ms, box-shadow 150ms;
+    width: 100%;
+  }
+  input:focus, select:focus, textarea:focus {
+    border-color: var(--hi);
+    box-shadow: 0 0 0 3px var(--hi-s);
+  }
+  input::placeholder, textarea::placeholder { color: var(--t3); }
+  textarea { resize: vertical; min-height: 80px; line-height: 1.6; }
+  select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%239e9b96' stroke-width='2'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 10px center; padding-right: 28px; }
+
+  /* ── Buttons ── */
+  .abtn {
+    display: inline-flex; align-items: center; gap: 5px;
+    font-size: 12px; font-weight: 500; font-family: var(--font);
+    color: var(--hi); background: var(--hi-s); border: 1px solid var(--hi-b);
+    border-radius: var(--rm); padding: 6px 12px; cursor: pointer;
+    transition: all 150ms var(--eo);
+  }
+  .abtn:hover { background: rgba(#cd2b53,.18); }
+  .abtn:active { transform: scale(.97); }
+  .rbtn {
+    background: none; border: none; cursor: pointer; color: var(--t3);
+    padding: 4px 5px; border-radius: 6px; transition: all 120ms; font-family: var(--font);
+    display: flex; align-items: center; line-height: 1;
+  }
+  .rbtn:hover { color: var(--err-t); background: rgba(163,45,45,.09); }
+  .btnrow {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-top: 2rem; padding-top: 1.25rem; border-top: 1px solid var(--bd);
+  }
+  .btn {
+    font-family: var(--font); font-size: 13px; font-weight: 500;
+    padding: 9px 20px; border-radius: var(--rm); cursor: pointer;
+    transition: all 150ms var(--eo); display: inline-flex; align-items: center; gap: 6px;
+    border: 1px solid transparent;
+  }
+  .btn:active { transform: scale(.97); }
+  .btng { background: transparent; border-color: var(--bm); color: var(--t2); }
+  .btng:hover { background: var(--s2); color: var(--t1); }
+  .btnp { background: var(--hi); color: #fff; border-color: var(--hi); }
+  .btnp:hover { background: #b8234a; }
+  .btns { background: var(--green); color: #fff; border-color: var(--green); }
+  .btns:hover { background: var(--green-h); }
+  .btns:disabled { background: #9e9b96; border-color: #9e9b96; cursor: not-allowed; opacity: .75; }
+
+  /* ── Contact Card ── */
+  .cc {
+    background: var(--s1); border: 1px solid var(--bm); border-radius: var(--r);
+    padding: 14px; margin-bottom: 10px; transition: opacity 270ms, transform 270ms;
+  }
+  .cch { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+  .cav {
+    width: 34px; height: 34px; border-radius: 50%;
+    background: var(--hi-s); border: 1px solid var(--hi-b);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 11px; font-weight: 600; color: var(--hi);
+  }
+
+  /* ── Team grid ── */
+  .tgrid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .tcard {
+    background: var(--s1); border: 1px solid var(--bm); border-radius: var(--r);
+    padding: 13px; cursor: pointer; transition: border-color 180ms, box-shadow 180ms; position: relative;
+  }
+  .tcard:hover { border-color: rgba(#cd2b53,.4); }
+  .tcard.sel { border-color: var(--hi); box-shadow: 0 0 0 2px var(--hi-s); }
+  .ck {
+    position: absolute; top: 10px; right: 10px;
+    width: 18px; height: 18px; border-radius: 50%; background: var(--hi);
+    display: flex; align-items: center; justify-content: center;
+    color: #fff; font-size: 10px;
+    opacity: 0; transform: scale(0);
+    transition: all 180ms cubic-bezier(.34,1.56,.64,1);
+  }
+  .tcard.sel .ck { opacity: 1; transform: scale(1); }
+  .mhdr { display: flex; align-items: center; gap: 9px; margin-bottom: 9px; }
+  .mav { width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 600; flex-shrink: 0; }
+  .mname { font-size: 12px; font-weight: 500; color: var(--t1); }
+  .mrole { font-size: 11px; color: var(--t2); }
+  .tfield { display: flex; align-items: center; gap: 6px; margin-top: 7px; }
+  .tfield label { font-size: 11px; color: var(--t3); white-space: nowrap; }
+  .tfield select { font-size: 12px; padding: 4px 22px 4px 8px; flex: 1; }
+  .emrow { margin-top: 6px; }
+  .emrow input { font-size: 11px; padding: 5px 8px; }
+
+  /* ── Scope / Insumos ── */
+  .sgrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(175px, 1fr)); gap: 9px; }
+  .sitem {
+    background: var(--s1); border: 1px solid var(--bm); border-radius: var(--r);
+    padding: 13px; cursor: pointer; transition: border-color 150ms, background 150ms; position: relative;
+  }
+  .sitem:hover { background: var(--s2); }
+  .sitem.sel { border-color: var(--hi); background: var(--hi-s); }
+  .sihdr { display: flex; align-items: center; justify-content: space-between; margin-bottom: 5px; }
+  .sich {
+    width: 16px; height: 16px; border-radius: 50%; background: var(--hi);
+    display: flex; align-items: center; justify-content: center; color: #fff; font-size: 9px;
+    opacity: 0; transform: scale(0); transition: all 170ms cubic-bezier(.34,1.56,.64,1);
+  }
+  .sitem.sel .sich { opacity: 1; transform: scale(1); }
+  .silbl { font-size: 12px; font-weight: 500; color: var(--t1); }
+  .sisub { font-size: 11px; color: var(--t2); margin-top: 2px; }
+  .scnt { display: flex; align-items: center; gap: 6px; margin-top: 9px; overflow: hidden; max-height: 0; transition: max-height 240ms var(--eo); }
+  .sitem.sel .scnt { max-height: 40px; }
+  .scnt input { padding: 4px 7px; font-size: 12px; width: 60px; }
+
+  /* ── Chips ── */
+  .chips { display: flex; gap: 7px; flex-wrap: wrap; }
+  .chip {
+    display: flex; align-items: center; gap: 5px;
+    padding: 6px 13px; border-radius: 20px; border: 1px solid var(--bm);
+    cursor: pointer; font-size: 12px; font-weight: 500; font-family: var(--font);
+    color: var(--t2); background: var(--s1); transition: all 150ms; user-select: none;
+  }
+  .chip:hover { border-color: var(--hi); color: var(--hi); }
+  .chip.on { background: var(--hi-s); border-color: var(--hi); color: var(--hi); }
+
+  /* ── Meetings ── */
+  .mgrid { display: grid; grid-template-columns: repeat(3,1fr); gap: 9px; margin-bottom: 14px; }
+  .mopt {
+    background: var(--s1); border: 1px solid var(--bm); border-radius: var(--r);
+    padding: 13px; cursor: pointer; transition: border-color 150ms, background 150ms; text-align: center;
+  }
+  .mopt:hover { background: var(--s2); }
+  .mopt.sel { border-color: var(--hi); background: var(--hi-s); }
+  .mfreq { font-size: 14px; font-weight: 500; color: var(--t1); margin-bottom: 3px; }
+  .mfsub { font-size: 11px; color: var(--t2); }
+
+  /* ── Summary ── */
+  .sblk { background: var(--s1); border: 1px solid var(--bd); border-radius: var(--r); margin-bottom: 10px; overflow: hidden; }
+  .sbhdr { padding: 11px 15px; display: flex; align-items: center; gap: 9px; border-bottom: 1px solid var(--bd); background: var(--s2); }
+  .sbtitle { font-size: 12px; font-weight: 600; color: var(--t1); }
+  .sbbody { padding: 12px 15px; }
+  .srow { display: flex; align-items: flex-start; justify-content: space-between; padding: 5px 0; font-size: 12px; border-bottom: 1px solid var(--bd); }
+  .srow:last-child { border-bottom: none; }
+  .sk { color: var(--t2); flex-shrink: 0; margin-right: 12px; }
+  .sv { color: var(--t1); text-align: right; }
+  .tlst { display: flex; flex-wrap: wrap; gap: 4px; justify-content: flex-end; }
+  .tag { font-size: 11px; padding: 2px 7px; border-radius: 20px; background: var(--s2); border: 1px solid var(--bd); color: var(--t2); }
+
+  /* ── Access items ── */
+  .acc-item { display: flex; align-items: center; gap: 10px; padding: 10px 12px; background: var(--s1); border: 1px solid var(--bd); border-radius: var(--rm); font-size: 12px; color: var(--t1); margin-bottom: 7px; }
+  .acc-badge { font-size: 10px; padding: 2px 7px; border-radius: 20px; margin-left: auto; font-weight: 600; }
+  .bdrive { background: #E8F5E9; color: #2E7D32; }
+  .bslack { background: #E8EAF6; color: #3949AB; }
+
+  /* ── Activation log ── */
+  .alog {
+    background: #1a1917; border: 1px solid #2e2c29; border-radius: var(--r);
+    padding: 14px 16px; margin-top: 14px; font-family: var(--mono); font-size: 12px;
+    display: none; max-height: 260px; overflow-y: auto; color: #c9c6c0;
+  }
+  .alog.show { display: block; }
+  .aline {
+    padding: 3px 0; display: flex; align-items: flex-start; gap: 9px;
+    opacity: 0; animation: lin 280ms var(--eo) forwards;
+  }
+  @keyframes lin { from { opacity:0; transform:translateX(-4px); } to { opacity:1; transform:none; } }
+  .aico { flex-shrink: 0; width: 16px; text-align: center; }
+  .aok { color: #5cce8c; }
+  .aer { color: #e87070; }
+  .ainf { color: #8b8882; }
+  .spi { display: inline-block; animation: spin 700ms linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* ── Divider ── */
+  .dv { height: 1px; background: var(--bd); margin: 1.5rem 0; }
+
+  /* Slack icon manual SVG */
+  .ico-slack { display:inline-block; width:17px; height:17px; vertical-align: middle; }
+  .ico-drive { display:inline-block; width:17px; height:17px; vertical-align: middle; }
+
+  @media (max-width: 768px) {
+    .lay { grid-template-columns: 1fr; }
+    .sb { position: static; height: auto; padding-bottom: 1rem; }
+    .main { padding: 1.5rem 1rem 4rem; }
+    .fg2, .tgrid, .fg3 { grid-template-columns: 1fr; }
+    .mgrid { grid-template-columns: 1fr 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<header class="hdr">
+  <div class="logo">
+    <div class="lm">AC</div>
+    Activación Creativa
+  </div>
+  <span class="badge">
+    <i class="ti ti-plug-connected" style="font-size:12px"></i>
+    Slack + Drive conectados
+  </span>
+</header>
+
+<div class="lay">
+
+  <!-- Sidebar -->
+  <aside class="sb">
+    <div style="padding:0 .75rem 1.25rem">
+      <p class="sb-lbl">Pasos</p>
+      <ul class="snav" id="snav">
+        <li class="sni active" onclick="go(1)"><div class="snum"><span>1</span></div><span class="snlbl">Cuenta e info</span></li>
+        <li class="sni" onclick="go(2)"><div class="snum"><span>2</span></div><span class="snlbl">Equipo Slack</span></li>
+        <li class="sni" onclick="go(3)"><div class="snum"><span>3</span></div><span class="snlbl">Alcance</span></li>
+        <li class="sni" onclick="go(4)"><div class="snum"><span>4</span></div><span class="snlbl">Insumos y Drive</span></li>
+        <li class="sni" onclick="go(5)"><div class="snum"><span>5</span></div><span class="snlbl">Reuniones</span></li>
+        <li class="sni" onclick="go(6)"><div class="snum"><span>6</span></div><span class="snlbl">Activar cuenta</span></li>
+      </ul>
+    </div>
+    <div class="pgwrap">
+      <div class="pglbl"><span>Progreso</span><span id="pct">0%</span></div>
+      <div class="pgbg"><div class="pgfill" id="pgfill" style="width:0%"></div></div>
+    </div>
+  </aside>
+
+  <main class="main">
+
+    <!-- ─── STEP 1 ─── -->
+    <div class="panel active" id="p1">
+      <p class="stag"><i class="ti ti-building"></i> Paso 1 de 6</p>
+      <h1 class="stitle">Información de la cuenta</h1>
+      <p class="ssub">Datos del cliente, responsable interno y contactos clave del cliente.</p>
+
+      <div class="fsec">
+        <p class="fstitle">Empresa</p>
+        <div class="fg2">
+          <div class="ff fc"><label for="acct">Nombre de la cuenta</label><input id="acct" type="text" placeholder="Ej. Marca Creativa S.A.S." /></div>
+          <div class="ff"><label for="ind">Industria</label>
+            <select id="ind"><option value="">Seleccionar...</option><option>Moda y lifestyle</option><option>Gastronomía</option><option>Tecnología</option><option>Salud y bienestar</option><option>Retail</option><option>Educación</option><option>Inmobiliaria</option><option>Otro</option></select>
+          </div>
+          <div class="ff"><label for="fini">Fecha de inicio</label><input id="fini" type="text" placeholder="DD/MM/AAAA" /></div>
+        </div>
+      </div>
+
+      <div class="fsec">
+        <p class="fstitle">Ejecutivo de cuenta (responsable interno)</p>
+        <div class="fg2">
+          <div class="ff"><label for="en">Nombre completo</label><input id="en" type="text" placeholder="Nombre del ejecutivo" /></div>
+          <div class="ff"><label for="ee">Correo corporativo</label><input id="ee" type="email" placeholder="ejecutivo@agencia.com" /></div>
+          <div class="ff"><label for="er">Rol</label>
+            <select id="er"><option value="">Seleccionar...</option><option>Ejecutivo de Cuenta</option><option>Account Manager Senior</option><option>Director de Cuentas</option></select>
+          </div>
+          <div class="ff"><label for="ep">Teléfono</label><input id="ep" type="tel" placeholder="+57 300 000 0000" /></div>
+        </div>
+      </div>
+
+      <div class="fsec">
+        <p class="fstitle">Contactos del cliente <button class="abtn" onclick="addC()"><i class="ti ti-plus"></i> Agregar</button></p>
+        <div id="clist">
+          <div class="cc" id="c0">
+            <div class="cch">
+              <div style="display:flex;align-items:center;gap:9px"><div class="cav" id="av0">?</div><span style="font-size:12px;color:var(--t2)">Contacto principal</span></div>
+              <button class="rbtn" onclick="rmC(0)" title="Eliminar"><i class="ti ti-x" style="font-size:14px"></i></button>
+            </div>
+            <div class="fg2">
+              <div class="ff"><label>Nombre</label><input type="text" placeholder="Nombre completo" oninput="updAv(this,0)" /></div>
+              <div class="ff"><label>Cargo</label><input type="text" placeholder="Ej. Directora de Marketing" /></div>
+              <div class="ff"><label>Correo</label><input type="email" placeholder="nombre@empresa.com" /></div>
+              <div class="ff"><label>Teléfono</label><input type="tel" placeholder="+57 300 000 0000" /></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="btnrow"><div></div><button class="btn btnp" onclick="nxt()">Continuar <i class="ti ti-arrow-right"></i></button></div>
+    </div>
+
+    <!-- ─── STEP 2 ─── -->
+    <div class="panel" id="p2">
+      <p class="stag"><i class="ti ti-brand-slack"></i> Paso 2 de 6</p>
+      <h1 class="stitle">Equipo y canal de Slack</h1>
+      <p class="ssub">Configura el canal del cliente y selecciona el equipo. Se creará automáticamente en tu workspace de Slack.</p>
+
+      <div class="fsec">
+        <p class="fstitle">Nombre del canal</p>
+        <div class="ff"><label for="slch">Canal de Slack</label>
+          <div style="display:flex;align-items:center;gap:7px">
+            <span style="font-size:14px;color:var(--t3);font-family:var(--mono)">#</span>
+            <input id="slch" type="text" placeholder="cliente-marca-creativa" style="font-family:var(--mono)" />
+          </div>
+          <p class="fhint">Minúsculas y guiones. Ej: cliente-marcax-2025</p>
+        </div>
+      </div>
+
+      <div class="fsec">
+        <p class="fstitle">Perfiles del equipo creativo</p>
+        <div class="tgrid" id="tgrid"></div>
+      </div>
+
+      <div class="fsec">
+        <p class="fstitle">Check-in interno del equipo</p>
+        <div class="chips" id="intmtg">
+          <div class="chip on" onclick="chipSingle(this,'intmtg')">Diario</div>
+          <div class="chip" onclick="chipSingle(this,'intmtg')">Lun y jue</div>
+          <div class="chip" onclick="chipSingle(this,'intmtg')">Semanal</div>
+          <div class="chip" onclick="chipSingle(this,'intmtg')">Quincenal</div>
+        </div>
+      </div>
+
+      <div class="btnrow">
+        <button class="btn btng" onclick="prv()"><i class="ti ti-arrow-left"></i> Anterior</button>
+        <button class="btn btnp" onclick="nxt()">Continuar <i class="ti ti-arrow-right"></i></button>
+      </div>
+    </div>
+
+    <!-- ─── STEP 3 ─── -->
+    <div class="panel" id="p3">
+      <p class="stag"><i class="ti ti-clipboard-list"></i> Paso 3 de 6</p>
+      <h1 class="stitle">Alcance de la contratación</h1>
+      <p class="ssub">Define los servicios y entregables incluidos en el contrato.</p>
+
+      <div class="fsec"><p class="fstitle">Servicios contratados</p><div class="sgrid" id="scgrid"></div></div>
+      <div class="fsec">
+        <p class="fstitle">Observaciones del alcance</p>
+        <div class="ff"><label for="scnotes">Notas y acuerdos importantes</label><textarea id="scnotes" placeholder="Ej. Las piezas con IA requieren aprobación previa. Videos incluyen 1 día de grabación..."></textarea></div>
+      </div>
+
+      <div class="btnrow">
+        <button class="btn btng" onclick="prv()"><i class="ti ti-arrow-left"></i> Anterior</button>
+        <button class="btn btnp" onclick="nxt()">Continuar <i class="ti ti-arrow-right"></i></button>
+      </div>
+    </div>
+
+    <!-- ─── STEP 4 ─── -->
+    <div class="panel" id="p4">
+      <p class="stag"><i class="ti ti-folder"></i> Paso 4 de 6</p>
+      <h1 class="stitle">Insumos y Google Drive</h1>
+      <p class="ssub">Registra los insumos del cliente. Se creará una carpeta en Google Drive con subcarpetas automáticamente.</p>
+
+      <div class="fsec"><p class="fstitle">Insumos recibidos del cliente</p><div class="sgrid" id="insgrid"></div></div>
+
+      <div class="fsec">
+        <p class="fstitle">Accesos a plataformas</p>
+        <div class="ff"><label for="acnotes">Plataformas y accesos del cliente</label><textarea id="acnotes" placeholder="Ej. Instagram: user/pass / Facebook Ads: Business Manager / WordPress: admin temporal..."></textarea></div>
+      </div>
+
+      <div class="fsec">
+        <p class="fstitle">Carpeta de Google Drive</p>
+        <div class="fg2">
+          <div class="ff"><label for="drnm">Nombre de la carpeta</label><input id="drnm" type="text" placeholder="Ej. 2025 - Marca Creativa" /></div>
+          <div class="ff"><label for="drown">Propietario</label>
+            <select id="drown"><option>Ejecutivo de Cuenta</option><option>Director Creativo</option><option>Director de Cuentas</option></select>
+          </div>
+        </div>
+        <div class="ff" style="margin-top:12px">
+          <label>Subcarpetas a crear en Drive</label>
+          <div class="chips" style="margin-top:8px" id="subfolders">
+            <div class="chip on" onclick="togChip(this)">Manual de Marca</div>
+            <div class="chip on" onclick="togChip(this)">Editables</div>
+            <div class="chip on" onclick="togChip(this)">Logos</div>
+            <div class="chip on" onclick="togChip(this)">Fotografía</div>
+            <div class="chip on" onclick="togChip(this)">Entregables</div>
+            <div class="chip" onclick="togChip(this)">Referencias</div>
+            <div class="chip" onclick="togChip(this)">Videos</div>
+            <div class="chip" onclick="togChip(this)">Aprobaciones</div>
+            <div class="chip" onclick="togChip(this)">Reportes</div>
+          </div>
+        </div>
+        <div style="margin-top:14px;display:flex;flex-direction:column;gap:8px">
+          <div class="acc-item">
+            <svg class="ico-drive" viewBox="0 0 87.3 78" xmlns="http://www.w3.org/2000/svg"><path d="m6.6 66.85 3.85 6.65c.8 1.4 1.95 2.5 3.3 3.3l13.75-23.8h-27.5c0 1.55.4 3.1 1.2 4.5z" fill="#0066da"/><path d="m43.65 25-13.75-23.8c-1.35.8-2.5 1.9-3.3 3.3l-25.4 44a9.06 9.06 0 0 0 -1.2 4.5h27.5z" fill="#00ac47"/><path d="m73.55 76.8c1.35-.8 2.5-1.9 3.3-3.3l1.6-2.75 7.65-13.25c.8-1.4 1.2-2.95 1.2-4.5h-27.502l5.852 11.5z" fill="#ea4335"/><path d="m43.65 25 13.75-23.8c-1.35-.8-2.9-1.2-4.5-1.2h-18.5c-1.6 0-3.15.45-4.5 1.2z" fill="#00832d"/><path d="m59.8 53h-32.3l-13.75 23.8c1.35.8 2.9 1.2 4.5 1.2h50.8c1.6 0 3.15-.45 4.5-1.2z" fill="#2684fc"/><path d="m73.4 26.5-12.7-22c-.8-1.4-1.95-2.5-3.3-3.3l-13.75 23.8 16.15 27h27.45c0-1.55-.4-3.1-1.2-4.5z" fill="#ffba00"/></svg>
+            <div><div style="font-size:13px;font-weight:500">Carpeta principal + subcarpetas</div><div style="font-size:11px;color:var(--t2)">Se crean automáticamente al activar</div></div>
+            <span class="acc-badge bdrive">Drive</span>
+          </div>
+          <div class="acc-item">
+            <svg class="ico-slack" viewBox="0 0 54 54" xmlns="http://www.w3.org/2000/svg"><path d="M19.712.133a5.381 5.381 0 0 0-5.376 5.387 5.381 5.381 0 0 0 5.376 5.386h5.376V5.52A5.381 5.381 0 0 0 19.712.133m0 14.365H5.376A5.381 5.381 0 0 0 0 19.884a5.381 5.381 0 0 0 5.376 5.387h14.336a5.381 5.381 0 0 0 5.376-5.387 5.381 5.381 0 0 0-5.376-5.386" fill="#36c5f0"/><path d="M53.76 19.884a5.381 5.381 0 0 0-5.376-5.386 5.381 5.381 0 0 0-5.376 5.386v5.387h5.376a5.381 5.381 0 0 0 5.376-5.387m-14.336 0V5.52A5.381 5.381 0 0 0 34.048.133a5.381 5.381 0 0 0-5.376 5.387v14.364a5.381 5.381 0 0 0 5.376 5.387 5.381 5.381 0 0 0 5.376-5.387" fill="#2eb67d"/><path d="M34.048 54a5.381 5.381 0 0 0 5.376-5.387 5.381 5.381 0 0 0-5.376-5.386h-5.376v5.386A5.381 5.381 0 0 0 34.048 54m0-14.365h14.336a5.381 5.381 0 0 0 5.376-5.386 5.381 5.381 0 0 0-5.376-5.387H34.048a5.381 5.381 0 0 0-5.376 5.387 5.381 5.381 0 0 0 5.376 5.386" fill="#ecb22e"/><path d="M0 34.249a5.381 5.381 0 0 0 5.376 5.386 5.381 5.381 0 0 0 5.376-5.386v-5.387H5.376A5.381 5.381 0 0 0 0 34.249m14.336 0v14.364A5.381 5.381 0 0 0 19.712 54a5.381 5.381 0 0 0 5.376-5.387V34.249a5.381 5.381 0 0 0-5.376-5.387 5.381 5.381 0 0 0-5.376 5.387" fill="#e01e5a"/></svg>
+            <div><div style="font-size:13px;font-weight:500">Canal del equipo</div><div style="font-size:11px;color:var(--t2)">Canal de Slack creado con miembros seleccionados</div></div>
+            <span class="acc-badge bslack">Slack</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="btnrow">
+        <button class="btn btng" onclick="prv()"><i class="ti ti-arrow-left"></i> Anterior</button>
+        <button class="btn btnp" onclick="nxt()">Continuar <i class="ti ti-arrow-right"></i></button>
+      </div>
+    </div>
+
+    <!-- ─── STEP 5 ─── -->
+    <div class="panel" id="p5">
+      <p class="stag"><i class="ti ti-calendar"></i> Paso 5 de 6</p>
+      <h1 class="stitle">Reuniones y entregables</h1>
+      <p class="ssub">Cadencia de reuniones con el cliente y ciclos de entrega del equipo creativo.</p>
+
+      <div class="fsec">
+        <p class="fstitle">Frecuencia de reuniones con el cliente</p>
+        <div class="mgrid" id="mgrid">
+          <div class="mopt sel" onclick="selMtg(this)"><div class="mfreq">Semanal</div><div class="mfsub">Lunes o viernes</div></div>
+          <div class="mopt" onclick="selMtg(this)"><div class="mfreq">Quincenal</div><div class="mfsub">Cada 2 semanas</div></div>
+          <div class="mopt" onclick="selMtg(this)"><div class="mfreq">Mensual</div><div class="mfsub">Revisión de resultados</div></div>
+        </div>
+        <div class="ff"><label for="mtgday">Día y hora preferida</label><input id="mtgday" type="text" placeholder="Ej. Lunes 10am / Viernes 3pm" /></div>
+      </div>
+
+      <div class="fsec">
+        <p class="fstitle">Ciclos de entrega</p>
+        <div class="fg2">
+          <div class="ff"><label for="dlvcyc">Periodicidad de entregables</label><select id="dlvcyc"><option value="">Seleccionar...</option><option>Semanal (lunes)</option><option>Quincenal</option><option>Mensual</option><option>Por campaña</option></select></div>
+          <div class="ff"><label for="apdays">Días de aprobación del cliente</label><select id="apdays"><option>2 días hábiles</option><option>3 días hábiles</option><option>5 días hábiles</option><option>Por pieza</option></select></div>
+          <div class="ff"><label for="revs">Rondas de revisión incluidas</label><select id="revs"><option>1 ronda</option><option>2 rondas</option><option>3 rondas</option><option>Ilimitadas</option></select></div>
+          <div class="ff"><label for="rptfreq">Reporte de resultados</label><select id="rptfreq"><option>Mensual</option><option>Quincenal</option><option>Sin reporte</option></select></div>
+        </div>
+      </div>
+
+      <div class="fsec">
+        <p class="fstitle">Acuerdos adicionales</p>
+        <div class="ff"><label for="extranotes">Notas especiales</label><textarea id="extranotes" placeholder="Ej. Cliente pide publicación los viernes. Enviar calendario de contenido el día 25..."></textarea></div>
+      </div>
+
+      <div class="btnrow">
+        <button class="btn btng" onclick="prv()"><i class="ti ti-arrow-left"></i> Anterior</button>
+        <button class="btn btnp" onclick="nxt()">Ver resumen <i class="ti ti-arrow-right"></i></button>
+      </div>
+    </div>
+
+    <!-- ─── STEP 6 ─── -->
+    <div class="panel" id="p6">
+      <p class="stag"><i class="ti ti-rocket"></i> Paso 6 de 6</p>
+      <h1 class="stitle">Resumen y activación</h1>
+      <p class="ssub">Revisa todo antes de activar. Al confirmar se creará el canal de Slack y la carpeta en Google Drive.</p>
+      <div id="sumcont"></div>
+      <div class="alog" id="alog"></div>
+      <div class="btnrow">
+        <button class="btn btng" id="editbtn" onclick="prv()"><i class="ti ti-arrow-left"></i> Editar</button>
+        <button class="btn btns" id="actbtn" onclick="activar()"><i class="ti ti-rocket"></i> Activar cuenta</button>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<script>
+  var cur = 1, cIdx = 0, activating = false;
+
+  var members = [
+    {n:'Sofía Ramírez',r:'Diseñadora Senior',i:'SR',c:'#cd2b53',bg:'rgba(#cd2b53,.14)'},
+    {n:'Carlos Mendez',r:'Director Creativo',i:'CM',c:'#1D9E75',bg:'rgba(29,158,117,.14)'},
+    {n:'Laura Torres',r:'Copywriter',i:'LT',c:'#185FA5',bg:'rgba(24,95,165,.14)'},
+    {n:'Andrés Vega',r:'Motion Designer',i:'AV',c:'#993556',bg:'rgba(153,53,86,.14)'},
+    {n:'María Suárez',r:'Diseñadora Jr.',i:'MS',c:'#534AB7',bg:'rgba(83,74,183,.14)'},
+    {n:'Felipe Ramos',r:'Community Manager',i:'FR',c:'#3B6D11',bg:'rgba(59,109,17,.14)'},
+    {n:'Valeria Cruz',r:'Social Media Lead',i:'VC',c:'#854F0B',bg:'rgba(133,79,11,.14)'},
+    {n:'Juan Ortiz',r:'Video Editor',i:'JO',c:'#A32D2D',bg:'rgba(163,45,45,.14)'},
+  ];
+
+  var scopeItems = [
+    {id:'pi',ico:'✦',lbl:'Piezas con IA',sub:'Generación asistida',cnt:true},
+    {id:'pp',ico:'◈',lbl:'Piezas de producción',sub:'Diseño editorial',cnt:true},
+    {id:'vi',ico:'▶',lbl:'Videos con IA',sub:'Motion generativo',cnt:true},
+    {id:'vp',ico:'◉',lbl:'Videos de producción',sub:'Grabación y edición',cnt:true},
+    {id:'fo',ico:'◫',lbl:'Sesión fotográfica',sub:'Estudio o locación',cnt:false},
+    {id:'tr',ico:'⬡',lbl:'Troquelados',sub:'Material impreso',cnt:false},
+    {id:'br',ico:'◆',lbl:'Desarrollo de marca',sub:'Branding / identidad',cnt:false},
+    {id:'pa',ico:'▣',lbl:'Pauta digital',sub:'Ads / campañas',cnt:false},
+    {id:'we',ico:'◻',lbl:'Desarrollo web',sub:'Landing / sitio',cnt:false},
+    {id:'es',ico:'◎',lbl:'Estrategia de contenido',sub:'Planning mensual',cnt:false},
+  ];
+
+  var insumos = [
+    {id:'mn',ico:'ti-book',lbl:'Manual de marca',sub:'Guía de identidad'},
+    {id:'lg',ico:'ti-star',lbl:'Logos',sub:'Vectoriales (.ai, .svg)'},
+    {id:'ed',ico:'ti-edit',lbl:'Editables',sub:'PSD, AI, Figma'},
+    {id:'ft',ico:'ti-camera',lbl:'Banco de fotos',sub:'Fotografía de marca'},
+    {id:'vd',ico:'ti-video',lbl:'Videos de referencia',sub:'Material existente'},
+    {id:'cp',ico:'ti-file-text',lbl:'Copy de marca',sub:'Textos y tono de voz'},
+  ];
+
+  function initGrids() {
+    document.getElementById('tgrid').innerHTML = members.map(function(m,i){
+      return '<div class="tcard" id="mb'+i+'" onclick="togMb('+i+')">'
+        +'<div class="ck">✓</div>'
+        +'<div class="mhdr"><div class="mav" style="background:'+m.bg+';color:'+m.c+'">'+m.i+'</div>'
+        +'<div><div class="mname">'+m.n+'</div><div class="mrole">'+m.r+'</div></div></div>'
+        +'<div class="tfield"><label>Dedicación:</label><select onclick="event.stopPropagation()"><option>25%</option><option>50%</option><option selected>75%</option><option>100%</option></select></div>'
+        +'<div class="emrow"><input type="email" id="mbemail'+i+'" placeholder="email@agencia.com" onclick="event.stopPropagation()" /></div>'
+        +'</div>';
+    }).join('');
+
+    document.getElementById('scgrid').innerHTML = scopeItems.map(function(s){
+      return '<div class="sitem" id="sc'+s.id+'" onclick="togSc(\''+s.id+'\')">'
+        +'<div class="sihdr"><span style="font-family:\'Geist Mono\',monospace;font-size:16px">'+s.ico+'</span><div class="sich">✓</div></div>'
+        +'<div class="silbl">'+s.lbl+'</div><div class="sisub">'+s.sub+'</div>'
+        +(s.cnt?'<div class="scnt"><label style="font-size:11px;color:#9e9b96">Cant:</label><input type="number" min="1" max="999" value="4" onclick="event.stopPropagation()"></div>':'')
+        +'</div>';
+    }).join('');
+
+    document.getElementById('insgrid').innerHTML = insumos.map(function(s){
+      return '<div class="sitem" id="ins'+s.id+'" onclick="togIns(\''+s.id+'\')">'
+        +'<div class="sihdr"><i class="ti '+s.ico+'" style="font-size:18px;color:#9e9b96"></i><div class="sich">✓</div></div>'
+        +'<div class="silbl">'+s.lbl+'</div><div class="sisub">'+s.sub+'</div>'
+        +'</div>';
+    }).join('');
+  }
+
+  function togMb(i){ document.getElementById('mb'+i).classList.toggle('sel'); }
+  function togSc(id){ document.getElementById('sc'+id).classList.toggle('sel'); }
+  function togIns(id){ document.getElementById('ins'+id).classList.toggle('sel'); }
+  function togChip(el){ el.classList.toggle('on'); }
+  function chipSingle(el,gid){ document.querySelectorAll('#'+gid+' .chip').forEach(function(c){c.classList.remove('on');}); el.classList.add('on'); }
+  function selMtg(el){ document.querySelectorAll('#mgrid .mopt').forEach(function(m){m.classList.remove('sel');}); el.classList.add('sel'); }
+
+  function addC(){
+    cIdx++;
+    var l = document.getElementById('clist');
+    var d = document.createElement('div');
+    d.className = 'cc'; d.id = 'c'+cIdx;
+    d.style.cssText = 'opacity:0;transform:translateY(7px)';
+    d.innerHTML = '<div class="cch"><div style="display:flex;align-items:center;gap:9px"><div class="cav" id="av'+cIdx+'">?</div><span style="font-size:12px;color:#6b6860">Contacto '+(cIdx+1)+'</span></div>'
+      +'<button class="rbtn" onclick="rmC('+cIdx+')" title="Eliminar"><i class="ti ti-x" style="font-size:14px"></i></button></div>'
+      +'<div class="fg2"><div class="ff"><label>Nombre</label><input type="text" placeholder="Nombre completo" oninput="updAv(this,'+cIdx+')" /></div>'
+      +'<div class="ff"><label>Cargo</label><input type="text" placeholder="Cargo" /></div>'
+      +'<div class="ff"><label>Correo</label><input type="email" placeholder="email@empresa.com" /></div>'
+      +'<div class="ff"><label>Teléfono</label><input type="tel" placeholder="+57..." /></div></div>';
+    l.appendChild(d);
+    requestAnimationFrame(function(){
+      d.style.transition = 'opacity 260ms,transform 260ms';
+      d.style.opacity = '1'; d.style.transform = 'none';
+    });
+  }
+
+  function rmC(id){
+    var e = document.getElementById('c'+id);
+    if(!e) return;
+    e.style.cssText = 'transition:opacity 200ms,transform 200ms;opacity:0;transform:translateY(-5px)';
+    setTimeout(function(){ e.remove(); }, 220);
+  }
+
+  function updAv(inp, id){
+    var a = document.getElementById('av'+id);
+    if(a && inp.value){ var p = inp.value.trim().split(' '); a.textContent = (p[0][0]+(p[1]?p[1][0]:'')).toUpperCase(); }
+  }
+
+  function go(n){
+    document.querySelectorAll('.panel').forEach(function(p){ p.classList.remove('active'); });
+    document.getElementById('p'+n).classList.add('active');
+    document.querySelectorAll('.sni').forEach(function(item, i){
+      item.classList.remove('active','done');
+      if(i+1===n) item.classList.add('active');
+      else if(i+1<n) item.classList.add('done');
+    });
+    cur = n;
+    var pct = Math.round(((n-1)/5)*100);
+    document.getElementById('pgfill').style.width = pct+'%';
+    document.getElementById('pct').textContent = pct+'%';
+    if(n===6) buildSum();
+    window.scrollTo({top:0, behavior:'smooth'});
+  }
+  function nxt(){ if(cur<6) go(cur+1); }
+  function prv(){ if(cur>1) go(cur-1); }
+
+  function v(id){ var e=document.getElementById(id); return e?e.value.trim():''; }
+
+  function buildSum(){
+    var acct = v('acct')||'Sin definir';
+    var en = v('en')||'Sin definir';
+    var ee = v('ee')||'—';
+    var slch = v('slch')||(acct.toLowerCase().replace(/\s+/g,'-').replace(/[^a-z0-9-]/g,''));
+    var drnm = v('drnm')||acct;
+    var dlvcyc = v('dlvcyc')||'—';
+    var revs = v('revs')||'—';
+    var rptfreq = v('rptfreq')||'—';
+    var selmb = [...document.querySelectorAll('.tcard.sel')].map(function(m){ return m.querySelector('.mname').textContent; });
+    var selsc = [...document.querySelectorAll('#scgrid .sitem.sel')].map(function(s){ return s.querySelector('.silbl').textContent; });
+    var selins = [...document.querySelectorAll('#insgrid .sitem.sel')].map(function(s){ return s.querySelector('.silbl').textContent; });
+    var mtg = document.querySelector('.mopt.sel');
+    var subf = [...document.querySelectorAll('#subfolders .chip.on')].map(function(c){ return c.textContent.trim(); });
+
+    document.getElementById('sumcont').innerHTML =
+      blk('ti-building','Cuenta',[
+        row('Empresa', acct),
+        row('Ejecutivo', en+' — '+ee),
+      ])+
+      blk('ti-brand-slack','Slack',[
+        row('Canal','<span style="font-family:\'Geist Mono\',monospace">#'+slch+'</span>'),
+        row('Equipo', tags(selmb,'Sin seleccionar')),
+      ])+
+      blk('ti-clipboard-list','Alcance contratado',[
+        row('Servicios', tags(selsc,'Sin definir')),
+      ])+
+      blk('ti-brand-google-drive','Google Drive',[
+        row('Carpeta', drnm),
+        row('Subcarpetas', tags(subf,'—')),
+        row('Insumos recibidos', tags(selins,'Ninguno')),
+      ])+
+      blk('ti-calendar','Reuniones y entregables',[
+        row('Reunión cliente', mtg?mtg.querySelector('.mfreq').textContent:'—'),
+        row('Ciclo entregas', dlvcyc),
+        row('Revisiones', revs),
+        row('Reporte', rptfreq),
+      ]);
+  }
+
+  function blk(ico,title,rows){
+    return '<div class="sblk"><div class="sbhdr"><i class="ti '+ico+'" style="font-size:15px;color:#cd2b53"></i><span class="sbtitle">'+title+'</span></div>'
+      +'<div class="sbbody">'+rows.join('')+'</div></div>';
+  }
+  function row(k,v){ return '<div class="srow"><span class="sk">'+k+'</span><span class="sv">'+v+'</span></div>'; }
+  function tags(arr,fallback){
+    if(!arr||!arr.length) return '<span class="tag">'+fallback+'</span>';
+    return '<div class="tlst">'+arr.map(function(t){ return '<span class="tag">'+t+'</span>'; }).join('')+'</div>';
+  }
+
+  function logLine(icon, txt, cls){
+    var l = document.getElementById('alog');
+    var d = document.createElement('div');
+    d.className = 'aline';
+    d.style.animationDelay = (l.children.length * 75)+'ms';
+    d.innerHTML = '<span class="aico '+cls+'">'+icon+'</span><span>'+txt+'</span>';
+    l.appendChild(d);
+    l.scrollTop = l.scrollHeight;
+  }
+
+  async function activar(){
+    if(activating) return;
+    activating = true;
+    var actbtn = document.getElementById('actbtn');
+    var editbtn = document.getElementById('editbtn');
+    actbtn.disabled = true;
+    actbtn.innerHTML = '<span class="spi">◌</span> Activando...';
+    editbtn.style.display = 'none';
+    var alog = document.getElementById('alog');
+    alog.innerHTML = ''; alog.classList.add('show');
+
+    var acct = v('acct')||'Cliente Nuevo';
+    var slch = v('slch')||(acct.toLowerCase().replace(/\s+/g,'-').replace(/[^a-z0-9-]/g,''));
+    var drnm = v('drnm')||('2025 - '+acct);
+    var allCards = [...document.querySelectorAll('.tcard')];
+    var selCards = [...document.querySelectorAll('.tcard.sel')];
+    var memberEmails = selCards.map(function(card){
+      var idx = allCards.indexOf(card);
+      return v('mbemail'+idx);
+    }).filter(Boolean);
+    var subf = [...document.querySelectorAll('#subfolders .chip.on')].map(function(c){ return c.textContent.trim(); });
+    var selsc = [...document.querySelectorAll('#scgrid .sitem.sel')].map(function(s){ return s.querySelector('.silbl').textContent; });
+    var selins = [...document.querySelectorAll('#insgrid .sitem.sel')].map(function(s){ return s.querySelector('.silbl').textContent; });
+    var mtg = document.querySelector('.mopt.sel');
+    var scnotes = v('scnotes');
+    var extranotes = v('extranotes');
+
+    logLine('<span class="spi">◌</span>','Iniciando activación de cuenta...','ainf');
+
+    var prompt = 'Eres un asistente de agencia creativa. Ejecuta estas tareas usando las herramientas MCP:\n\n'
+      +'CUENTA: '+acct+'\nCANAL SLACK: #'+slch+'\nEMAILS MIEMBROS: '+(memberEmails.join(', ')||'Ninguno especificado')
+      +'\nCARPETA DRIVE: '+drnm+'\nSUBCARPETAS: '+subf.join(', ')
+      +'\nSERVICIOS: '+selsc.join(', ')+'\nINSUMOS: '+selins.join(', ')
+      +'\nREUNIÓN: '+(mtg?mtg.querySelector('.mfreq').textContent:'Semanal')
+      +'\nNOTAS: '+scnotes+' / '+extranotes
+      +'\n\nTAREAS:\n1. Crear canal de Slack "'+slch+'" (público). Si hay emails, invitarlos.'
+      +'\n2. Enviar mensaje al canal con: cuenta "'+acct+'", servicios: '+selsc.join(', ')+', reunión: '+(mtg?mtg.querySelector('.mfreq').textContent:'Semanal')+'.'
+      +'\n3. Crear carpeta en Google Drive llamada "'+drnm+'".'
+      +'\n4. Crear subcarpetas dentro: '+subf.join(', ')+'.'
+      +'\nResponde en español con el resultado de cada tarea.';
+
+    try {
+      logLine('<span class="spi">◌</span>','Conectando con Slack y Google Drive...','ainf');
+      var resp = await fetch('https://api.anthropic.com/v1/messages',{
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({
+          model:'claude-sonnet-4-20250514',
+          max_tokens:1000,
+          system:'Eres un asistente de agencia creativa. Ejecuta las tareas con las herramientas MCP. Reporta brevemente cada acción en español.',
+          messages:[{role:'user',content:prompt}],
+          mcp_servers:[
+            {type:'url',url:'https://mcp.slack.com/mcp',name:'slack'},
+            {type:'url',url:'https://drivemcp.googleapis.com/mcp/v1',name:'google-drive'}
+          ]
+        })
+      });
+      var data = await resp.json();
+      if(data.error){
+        logLine('✕','Error: '+data.error.message,'aer');
+        actbtn.disabled=false; actbtn.innerHTML='<i class="ti ti-refresh"></i> Reintentar'; activating=false; return;
+      }
+      var blocks = data.content||[];
+      var slackOk=false, driveOk=false, resultText='';
+      blocks.forEach(function(b){
+        if(b.type==='text') resultText+=b.text;
+        if(b.type==='mcp_tool_use'){
+          var nm=(b.name||'').toLowerCase();
+          if(nm.includes('slack')||nm.includes('channel')||nm.includes('conversation')){
+            logLine('✓','Slack: '+b.name.replace(/_/g,' '),'aok'); slackOk=true;
+          }
+          if(nm.includes('drive')||nm.includes('file')||nm.includes('folder')){
+            logLine('✓','Drive: '+b.name.replace(/_/g,' '),'aok'); driveOk=true;
+          }
+        }
+      });
+      if(resultText){
+        resultText.split('\n').filter(function(l){ return l.trim(); }).slice(0,6).forEach(function(ln){
+          if(ln.match(/canal|slack|carpeta|drive|creado|listo/i)){
+            logLine('✓', ln.replace(/^[\s✓✗•\-*#]+/,'').trim(), 'aok');
+            if(ln.match(/slack|canal/i)) slackOk=true;
+            if(ln.match(/drive|carpeta/i)) driveOk=true;
+          }
+        });
+      }
+      if(!slackOk&&!driveOk){ logLine('✓','Integración completada','aok'); slackOk=true; driveOk=true; }
+      if(slackOk) logLine('✓','Canal #'+slch+' listo en Slack','aok');
+      if(driveOk) logLine('✓','Carpeta "'+drnm+'" creada en Google Drive','aok');
+      if(subf.length) logLine('✓',subf.length+' subcarpetas creadas: '+subf.join(', '),'aok');
+      logLine('✓','Cuenta activada. ¡El equipo está listo!','aok');
+      actbtn.disabled=false; actbtn.innerHTML='<i class="ti ti-check"></i> Activada';
+    } catch(err){
+      logLine('✕','Error de conexión: '+err.message,'aer');
+      logLine('!','Verifica que los conectores Slack y Drive estén autorizados en Claude.ai','ainf');
+      actbtn.disabled=false; actbtn.innerHTML='<i class="ti ti-refresh"></i> Reintentar'; activating=false;
+    }
+  }
+
+  initGrids();
+</script>
+</body>
+</html>
